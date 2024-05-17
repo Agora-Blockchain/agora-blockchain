@@ -22,7 +22,9 @@ pragma solidity ^0.8.20;
 // Private function
 // View and Pure functions
 
-contract Election {
+import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+
+contract Election is Initializable {
 
     error Election__FailedToAddCandidate();
     error Election__ResultsNotDeclared();
@@ -38,14 +40,19 @@ contract Election {
     address private resultCalculator;
     
 
+    event ElectionInitialized(address ballot, address resultCalculator);
     event CandidateAdded(uint256 candidateId);
     event Voted(uint256 candidateId);
     event ResultDeclared(uint256 winnerId);
 
-    constructor(address _ballotAddress, address _resultCalculatorAddress){
+    constructor(){
         resultDeclared = false;
+    }
+
+    function initialize(address _ballotAddress, address _resultCalculatorAddress) public initializer {
         ballot = _ballotAddress;
         resultCalculator = _resultCalculatorAddress;
+        emit ElectionInitialized(ballot, resultCalculator);
     }
 
     function addCandidate(uint256 _candidateId) public {
