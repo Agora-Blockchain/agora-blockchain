@@ -30,5 +30,9 @@ contract ElectionFactory is Ownable {
         Election(electionAddress).initialize(ballotIdToType[ballotId], resultCalculatorIdToType[resultCalculatorId]);
         emit ElectionCreated(electionAddress);
     }
+
+    function getElectionImplementation() public view returns (address) {
+        return electionImplementation;
+    }
    
 }
