@@ -25,7 +25,7 @@ contract ElectionFactory is Ownable {
         resultCalculatorIdToType[resultCalculatorId] = resultCalculatorType;
     }
 
-    function createElection(uint256 ballotId,uint256 resultCalculatorId) public onlyOwner {
+    function createElection(uint256 ballotId,uint256 resultCalculatorId) public {
         address electionAddress = Clones.clone(electionImplementation);
         Election(electionAddress).initialize(ballotIdToType[ballotId], resultCalculatorIdToType[resultCalculatorId]);
         emit ElectionCreated(electionAddress);
