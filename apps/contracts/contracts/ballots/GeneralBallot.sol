@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.20;
 
-import "./Ballot.sol";
+import {IBallot} from "./IBallot.sol";
 
-contract GeneralBallot is Ballot {
+contract GeneralBallot is IBallot {
 
     uint256[] private candidateList;    
     mapping(uint256 => uint256) private candidateVotes;

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 
-interface Ballot {
+interface IBallot {
     
     function addCandidate(uint256 _candidateId) external;
 
