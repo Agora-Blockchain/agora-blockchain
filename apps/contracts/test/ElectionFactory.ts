@@ -65,4 +65,14 @@ describe("ElectionFactory",function (){
         });
     });
 
+    describe("Create Election",async function(){
+        it("Should create a new election", async function(){
+            const {electionFactory,ballot,resultCalculator} = await loadFixture(deployElectionFactoryFixture);
+
+            await electionFactory.addBallotType(1,ballot.target);
+            await electionFactory.addResultCalculatorType(1,resultCalculator.target);
+
+            await expect(electionFactory.createElection(1,1)).to.emit(electionFactory,"ElectionCreated");
+        });
+    });
 })
