@@ -2,5 +2,5 @@
 pragma solidity ^0.8.20;
 
 interface IResultCalculator {
-    function calculateResult(address ballotAddress) external view returns (uint256);
+    function calculateResult() external;
 }

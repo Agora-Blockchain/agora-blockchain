@@ -22,22 +22,21 @@ pragma solidity ^0.8.20;
 // Private function
 // View and Pure functions
 
-import {IBallot} from "./ballots/IBallot.sol";
-import {IResultCalculator} from "./resultCalculators/IResultCalculator.sol";
-
-
 contract Election {
 
     error Election__FailedToAddCandidate();
     error Election__ResultsNotDeclared();
+    error Election__FailedToDeclareResult();
 
     uint256[] private candidateList;
     mapping(uint256 => uint256) private candidateVotes;
 
-    IBallot private ballotAddress;
-    IResultCalculator private resultCalculatorAddress;
     uint256 private winnerId;
     bool private resultDeclared;
+
+    address private ballot;
+    address private resultCalculator;
+    
 
     event CandidateAdded(uint256 candidateId);
     event Voted(uint256 candidateId);
@@ -45,12 +44,12 @@ contract Election {
 
     constructor(address _ballotAddress, address _resultCalculatorAddress){
         resultDeclared = false;
-        ballotAddress = IBallot(_ballotAddress);
-        resultCalculatorAddress = IResultCalculator(_resultCalculatorAddress);
+        ballot = _ballotAddress;
+        resultCalculator = _resultCalculatorAddress;
     }
 
     function addCandidate(uint256 _candidateId) public {
-        (bool success,) = address(ballotAddress).delegatecall(abi.encodeWithSignature("addCandidate(uint256)",_candidateId));
+        (bool success,) = address(ballot).delegatecall(abi.encodeWithSignature("addCandidate(uint256)",_candidateId));
         if (!success) {
             revert Election__FailedToAddCandidate();
         }
@@ -58,7 +57,7 @@ contract Election {
     }
 
     function vote(uint256 _candidateId) public {
-        (bool success,) = address(ballotAddress).delegatecall(abi.encodeWithSignature("vote(uint256)",_candidateId));
+        (bool success,) = address(ballot).delegatecall(abi.encodeWithSignature("vote(uint256)",_candidateId));
         if (!success) {
             revert Election__FailedToAddCandidate();
         }
@@ -66,7 +65,10 @@ contract Election {
     }
 
     function getResults() public {
-        winnerId =  resultCalculatorAddress.calculateResult(address(ballotAddress));
+        (bool success,) = address(resultCalculator).delegatecall(abi.encodeWithSignature("calculateResult()"));
+        if (!success) {
+            revert Election__FailedToDeclareResult();
+        }
         emit ResultDeclared(winnerId);
     }
 
@@ -75,6 +77,14 @@ contract Election {
             revert Election__ResultsNotDeclared();
         }
         return winnerId;
+    }
+
+    function getCandidateVotes(uint256 _candidateId) public view returns (uint256) {
+        return candidateVotes[_candidateId];
+    }
+
+    function getCandidateList() public view returns (uint256[] memory) {
+        return candidateList;
     }
     
 }
