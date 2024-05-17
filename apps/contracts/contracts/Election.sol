@@ -45,11 +45,8 @@ contract Election is Initializable {
     event Voted(uint256 candidateId);
     event ResultDeclared(uint256 winnerId);
 
-    constructor(){
-        resultDeclared = false;
-    }
-
     function initialize(address _ballotAddress, address _resultCalculatorAddress) public initializer {
+        resultDeclared = false;
         ballot = _ballotAddress;
         resultCalculator = _resultCalculatorAddress;
         emit ElectionInitialized(ballot, resultCalculator);
